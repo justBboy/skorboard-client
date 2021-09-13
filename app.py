@@ -1,7 +1,7 @@
 from utils import generate_id
 from app_functions import connect_client, connect_user, get_connected_clients, remove_connected
 from flask import Flask, request, jsonify
-from flask_socketio import SocketIO, emit, join_room, close_room, send
+from flask_socketio import SocketIO, emit, join_room, close_room
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -26,9 +26,8 @@ def get_id():
     return id
 
 @socketio.on("isClient")
-def is_client():
+def is_client(id):
     print("is client")
-    id = request.sid
     connect_client(id)
 
 @socketio.on("connectWithClient")
