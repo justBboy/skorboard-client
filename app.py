@@ -19,6 +19,7 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 def connected():
     id = request.sid
     connect_user(id)
+    emit("connected_custom", {'data': 'connected'})
 
 @socketio.on("getId")
 def get_id():
@@ -26,8 +27,9 @@ def get_id():
     return id
 
 @socketio.on("isClient")
-def is_client(id):
+def is_client():
     print("is client")
+    id = request.sid
     connect_client(id)
 
 @socketio.on("connectWithClient")

@@ -1,0 +1,64 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>test</title>
+    <style>
+        a:focus {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 id="_id"></h1>
+    <a href="#">Link 1</a>
+    <a href="#" data-last-el="true">Link 2</a>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+    <script>
+        const socket = io("http://localhost:5000")
+        var currentEl = document.body.firstElementChild;
+
+        socket.on("connect", function() {
+            socket.emit("isClient")
+            socket.emit("getId", (id) => {
+                console.log(id);
+                var idEl = document.getElementById("_id")
+                idEl.textContent = id;
+            })
+        })
+
+        socket.on("command", (command) => {
+            switch (command) {
+                case "down":
+                    console.log("down");
+                    var childNodes = Array.from(currentEl.children);
+                    if (childNodes.length) {
+                        currentEl = currentEl.firstChild;
+                    } else {
+                        if (currentEl.nextElementSibling) {
+                            if (currentEl.nextElementSibling.tagName == "SCRIPT") {
+                                currentEl = document.body.firstElementChild
+                            } else {
+                                currentEl = currentEl.nextElementSibling
+                            }
+                        } else {
+                            currentEl = document.body.firstElementChild
+                        }
+                    }
+                    console.dir(currentEl)
+                    currentEl.focus();
+                case "up":
+                    if (currentEl.tagName == "BODY") {
+                        currentEl = document.querySelector("[data-last-el]");
+                        console.log(currentEl);
+                    }
+            }
+        })
+    </script>
+</body>
+
+</html>
